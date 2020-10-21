@@ -35,7 +35,7 @@ namespace RatesApi
                 response.EnsureSuccessStatusCode();
                 var responseBody = response.Content.ReadAsStringAsync().Result;
 
-                string writePath = @"C:\work\С#\RatesApi\rates.txt";
+                string writePath = @"rates.txt";
 
                 using (StreamWriter sw = new StreamWriter(writePath, true))
                 {

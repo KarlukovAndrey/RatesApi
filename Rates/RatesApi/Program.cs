@@ -1,4 +1,5 @@
-﻿using System;
+﻿using RatesApi.Model;
+using System;
 using System.IO;
 using System.Net.Http;
 using System.Timers;
@@ -12,7 +13,7 @@ namespace RatesApi
         static void Main()
         {
 
-            Timer timer = new Timer(2000);
+            Timer timer = new Timer(4000);
             timer.Elapsed += GetRates;
             timer.AutoReset = true;
             timer.Enabled = true;
@@ -31,19 +32,20 @@ namespace RatesApi
             try
             {
 
-                HttpResponseMessage response = client.GetAsync(url).Result;
+                var response = client.GetAsync(url).Result;
                 response.EnsureSuccessStatusCode();
-                var responseBody = response.Content.ReadAsStringAsync().Result;
+                var responseString = response.Content.ReadAsStringAsync().Result;
 
                 string writePath = @"rates.txt";
 
                 using (StreamWriter sw = new StreamWriter(writePath, true))
                 {
-                    sw.WriteLine(responseBody);
+                    sw.WriteLine(responseString);
                 }
+                Console.WriteLine(responseString);
 
+                var responseResult = response.Content.ReadAsAsync<ResponseModel>().Result;
 
-                Console.WriteLine(responseBody);
             }
             catch (HttpRequestException ex)
             {

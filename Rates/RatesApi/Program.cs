@@ -1,7 +1,9 @@
 ﻿using RatesApi.Model;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Net.Http;
+using System.Security.Cryptography.X509Certificates;
 using System.Timers;
 
 namespace RatesApi
@@ -18,9 +20,6 @@ namespace RatesApi
             timer.AutoReset = true;
             timer.Enabled = true;
             Console.ReadLine();
-
-
-
         }
 
         public static void GetRates(object source = null, ElapsedEventArgs e = null)
@@ -46,6 +45,12 @@ namespace RatesApi
 
                 var responseResult = response.Content.ReadAsAsync<ResponseModel>().Result;
 
+                Dictionary<string, decimal> ratesDictionary = new Dictionary<string, decimal>
+                {
+                    ["USDRUB"] = responseResult.rates.RUB,
+                    ["USDEUR"] = responseResult.rates.EUR,
+                    ["USDJPY"] = responseResult.rates.JPY
+                };
             }
             catch (HttpRequestException ex)
             {

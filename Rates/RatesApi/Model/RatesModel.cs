@@ -6,8 +6,8 @@ namespace RatesApi.Model
 {
     public class RatesModel
     {
-        public double EUR { get; set; }
-        public double JPY { get; set; }
-        public double RUB { get; set; }
+        public decimal EUR { get; set; }
+        public decimal JPY { get; set; }
+        public decimal RUB { get; set; }
     }
 }

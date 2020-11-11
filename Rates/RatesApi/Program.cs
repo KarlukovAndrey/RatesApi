@@ -1,10 +1,13 @@
-﻿using RatesApi.Model;
+using MassTransit;
+using RatesApi.Model;
+using Exchanging;
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Net.Http;
-using System.Security.Cryptography.X509Certificates;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Timers;
+using Timer = System.Timers.Timer;
 
 namespace RatesApi
 {
@@ -12,8 +15,32 @@ namespace RatesApi
     {
         static readonly HttpClient client = new HttpClient();
 
-        static void Main()
+        static async Task Main()
         {
+            var bus = Bus.Factory.CreateUsingRabbitMq(config =>
+            {
+                config.Host("localhost");
+
+                config.ReceiveEndpoint("test_queue", ep =>
+                {
+                    ep.Handler<TestMessage>(context =>
+                    {
+                        Console.Out.WriteLineAsync($"Received: {context.Message.Text}");
+                        return Console.Out.WriteLineAsync($"Received: {context.Message.Text2}");
+                    });
+                });
+            });
+
+            await bus.StartAsync(); 
+            Console.WriteLine("Publishing message");
+            Thread.Sleep(5000);
+
+            await bus.Publish(new TestMessage { Text = "Hi", Text2 = "Go to hell" });
+
+            Console.WriteLine("Press any key to exit");
+            await Task.Run(() => Console.ReadKey());
+
+            await bus.StopAsync();
 
             Timer timer = new Timer(4000);
             timer.Elapsed += GetRates;

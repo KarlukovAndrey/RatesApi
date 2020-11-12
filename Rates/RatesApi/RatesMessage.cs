@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Exchanging
 {
-    public class TestMessage
+    public class RatesMessage
     {   
         public Dictionary<string, decimal> RatesDictionary { get; set; }        
     }

@@ -15,10 +15,9 @@ using Newtonsoft.Json;
 namespace RatesApi
 {
     class Program
-    {
-        static readonly HttpClient client = new HttpClient();
-        public static Dictionary<string, decimal> ratesResult = new Dictionary<string, decimal>();       
+    {            
         public static IBusControl bus;
+        public static Rates rates = new Rates("RUB,EUR,JPY");
         static async Task Main()
         {
            bus = Bus.Factory.CreateUsingRabbitMq(config =>
@@ -28,7 +27,7 @@ namespace RatesApi
             await bus.StartAsync();
 
             Timer timer = new Timer(4000);
-            timer.Elapsed += GetRates;
+            timer.Elapsed += rates.GetRates;
             timer.Elapsed += Send;
             timer.AutoReset = true;
             timer.Enabled = true;
@@ -39,44 +38,8 @@ namespace RatesApi
 
         private static async void Send(object source = null, ElapsedEventArgs e = null)
         {       
-            await bus.Publish(new TestMessage { RatesDictionary = ratesResult });          
+            await bus.Publish(new RatesMessage { RatesDictionary = rates.ratesResult.rates });          
             await Task.Run(() => Console.ReadKey());          
-        }
-
-        public static void GetRates(object source = null, ElapsedEventArgs e = null)
-        {
-            string baseUrl = "https://openexchangerates.org/api/latest.json";
-            string appId = "663f6a0f9c604f439a5fc905ef766f18";
-            string symbols = "RUB,EUR,JPY";
-            string url = baseUrl + "?app_id=" + appId + "&symbols=" + symbols;
-            try
-            {
-                var response = client.GetAsync(url).Result;
-                response.EnsureSuccessStatusCode();
-                var responseString = response.Content.ReadAsStringAsync().Result;
-
-                string writePath = @"rates.txt";
-
-                using (StreamWriter sw = new StreamWriter(writePath, true))
-                {
-                    sw.WriteLine(responseString);
-                }
-                //Console.WriteLine(responseString);
-              
-                var responseResult = response.Content.ReadAsAsync<ResponseModel>().Result;                
-
-                ratesResult = new Dictionary<string, decimal>
-                {
-                    ["USDRUB"] = responseResult.rates.RUB,
-                    ["USDEUR"] = responseResult.rates.EUR,
-                    ["USDJPY"] = responseResult.rates.JPY
-                };                 
-            }
-            catch (HttpRequestException ex)
-            {
-                Console.WriteLine("\nException Caught!");
-                Console.WriteLine("Message :{0} ", ex.Message);
-            }
-        }
+        }       
     }
 }

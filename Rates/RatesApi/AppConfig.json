@@ -1,0 +1,13 @@
+{
+  "RatesEndpointSettings": {
+    "BaseUrl": "https://openexchangerates.org/api/latest.json",
+    "AppId": "663f6a0f9c604f439a5fc905ef766f18",
+    "CurrencyCodes": "RUB,EUR,JPY"
+  },
+  "TimerSettings": {
+    "interval": 3600000
+  },
+  "RabbitMqConnectionSettings": {
+    "Host": "localhost" 
+  }
+}

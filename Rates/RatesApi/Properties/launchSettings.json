@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "RatesApi": {
+      "commandName": "Project"
+    },
+    "Release": {
+      "commandName": "Executable"
+    }
+  }
+}

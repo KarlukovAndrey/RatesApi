@@ -5,7 +5,7 @@
     "CurrencyCodes": "RUB,EUR,JPY"
   },
   "TimerSettings": {
-    "interval": 3600000
+    "interval": 5000
   },
   "RabbitMqConnectionSettings": {
     "Host": "localhost" 

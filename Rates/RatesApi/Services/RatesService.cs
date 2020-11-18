@@ -13,12 +13,13 @@ namespace RatesApi
         private string _url;
         private RequestSender _requestSender;
         private IBusControlProvider _bus;        
+           
         public RatesService(RequestSender requestSender, IBusControlProvider bus, ConfigurationProvider configurationProvider)
         {           
             _requestSender = requestSender;           
             _bus = bus;           
             var config = configurationProvider.GetRatesEndpointSettings();
-            _url = $"{config.BaseUrl}?app_id={config.AppId}&symbols={config.CurrencyCodes}";
+            _url = $"{config.BaseUrl}?app_id={config.AppId}&symbols={config.CurrencyCodes}";           
         }
 
 
@@ -26,7 +27,7 @@ namespace RatesApi
         {           
             try
             {
-                _ratesResult = _requestSender.Get<ResponseModel>(_url);
+                _ratesResult = _requestSender.Get<ResponseModel>(_url);            
                 _bus.PublishMessage(new RatesMessage { RatesDictionary = _ratesResult.rates });
             }
             catch (HttpRequestException ex)

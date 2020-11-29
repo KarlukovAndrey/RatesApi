@@ -16,6 +16,7 @@ namespace RatesApi
 
         public void SetUpAndStart()
         {
+            _ratesService.GetRatesAndSend();
             _timer.Elapsed += _ratesService.GetRatesAndSend;
             _timer.AutoReset = true;
             _timer.Enabled = true;

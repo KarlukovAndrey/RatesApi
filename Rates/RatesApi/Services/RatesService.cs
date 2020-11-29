@@ -29,6 +29,7 @@ namespace RatesApi
             {
                 _ratesResult = _requestSender.Get<ResponseModel>(_url);            
                 _bus.PublishMessage(new RatesMessage { RatesDictionary = _ratesResult.rates });
+                Console.WriteLine("Send");
             }
             catch (HttpRequestException ex)
             {
